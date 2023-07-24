@@ -2,9 +2,10 @@ import request from 'request';
 import express from 'express';
 import fetch from 'node-fetch';
 import cities from './cities.js';
+import { config } from 'dotenv';
 const app = express();
+config();
 app.use(express.json());
-const port = 3000;
 
 app.post("/divar_send_sms", (req, res) => {
     const options = {
@@ -259,5 +260,5 @@ app.post("/divar_post", (req, res) => {
         });
 });
 
-app.listen(port, 3000);
+app.listen(port, process.env.PORT);
 

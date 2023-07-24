@@ -1,6 +1,0 @@
-Endpoints:
-
-    /divar_send_sms POST => phone => status
-    /divar_verify_sms POST => phone , code => status , token
-    /divar_cities GET
-    /divar_post POST => national_id , token , city , category , size , user_type , rooms , years , floor , rent_to_sigle , title, discription , parking, warehouse, elevator

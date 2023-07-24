@@ -1,14 +1,16 @@
 import requests 
 
-
-# res = requests.post("http://127.0.0.1:3000/divar_sms", json = { "phone" : "9138780275"}).json()
+#################################### Divar 
+##### Verify user
+# res = requests.post("http://127.0.0.1:3000/divar_send_sms", json = { "phone" : "9138780275"}).json()
 # if res["status"] == 'true':
 #     code = input("code: ")
-#     res = requests.post("http://127.0.0.1:3000/verify_sms", json = { "phone" : "9138780275","code": code})
+#     res = requests.post("http://127.0.0.1:3000/divar_verify_sms", json = { "phone" : "9138780275","code": code})
 #     print(res.text)
 #     # { status : "true" or "false" , "token": "....."}
 
 
+######### Post
 # requested = {
 #     "token": "",
 #     "city": "اصفهان",
@@ -31,5 +33,20 @@ import requests
 # # { "status": "true", "message": "posted" }
 # print(res.text)
 
-res = requests.get("http://127.0.0.1:3000/cities").json()
+
+################ Cities
+# res = requests.get("http://127.0.0.1:3000/divar_cities").json()
+# print(res)
+
+
+
+#################################### Sheypoor
+##### Verify user
+res = requests.post("http://127.0.0.1:3000/sheypoor_send_sms", json = { "phone" : "9138780275"}).json()
 print(res)
+if res["status"] == 'true':
+    code = input("code: ")
+    token = input("token: ")
+    res = requests.post("http://127.0.0.1:3000/sheypoor_verify_sms", json = {"code": code ,"token": token})
+    # print(res.text)
+    # { status : "true" or "false" , "token": "....."}

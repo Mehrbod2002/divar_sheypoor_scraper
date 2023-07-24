@@ -2,12 +2,58 @@ import request from 'request';
 import express from 'express';
 import fetch from 'node-fetch';
 import cities from './cities.js';
-console.log(cities)
 const app = express();
 app.use(express.json());
 const port = 3000;
 
-app.post("/divar_sms", (req, res) => {
+app.post("/sheypoor_send_sms", (req, res) => {
+    const url = 'https://www.sheypoor.com/api/v10.0.0/auth/send';
+    const options = {
+        method: 'POST',
+        headers: {
+            'Host': 'www.sheypoor.com',
+            'Content-Length': '26',
+            'Sec-Ch-Ua': '"Not A(Brand";v="24", "Chromium";v="110"',
+            'Accept': 'application/json',
+            'Content-Type': 'application/json;charset=UTF-8',
+            'Sec-Ch-Ua-Mobile': '?0',
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.5481.78 Safari/537.36',
+            'Sec-Ch-Ua-Platform': '"Linux"',
+            'Origin': 'https://www.sheypoor.com',
+            'Sec-Fetch-Site': 'same-origin',
+            'Sec-Fetch-Mode': 'cors',
+            'Sec-Fetch-Dest': 'empty',
+            'Referer': 'https://www.sheypoor.com/session',
+            'Accept-Encoding': 'gzip, deflate',
+            'Accept-Language': 'en-US,en;q=0.9',
+            'Cookie': 'AMP_TOKEN=%24RETRIEVING; ts=b7327854cbe4c285eac3756841da8c14; track_id=14f1f038dfca67e5d54be6327de3197a; _ga=GA1.1.1737732084.1690197303; analytics_token=0e8debfa-e128-720b-9bbb-5a58e3815b4c; analytics_session_token=14bf676e-9796-2da2-5e72-59b4ca04b7d8; yektanet_session_last_activity=7/24/2023; _yngt_iframe=1; _ga_ZQPNE545GF=GS1.1.1690197303.1.1.1690197309.54.0.0; _yngt=4bcb2bb4-46c76-649ae-e0363-3bd60900a3498',
+        },
+        body: null,
+    };
+    if (req.body.phone && req.body.phone.length == 10 && req.body.phone.substring(0, 2) == "91") {
+        options.body = JSON.stringify({ "username": req.body.phone });
+        fetch(url, options)
+            .then(response => {
+                if (!response.ok || response.status != 200) {
+                    res.json({ "status": "false", "message": "failed_to_verify_sms" });
+                } else {
+                    return response.json();
+                }
+            })
+            .then(data => {
+                if (data?.success) {
+                    res.json({ "status": "true", "message": "done", "token": data?.data?.verify.token });
+                }
+            })
+            .catch(_err => {
+                res.json({ "status": "false", "message": "failed_to_verify_sms" });
+            });
+    } else {
+        res.json({ "status": "false", "message": "invalid_phone" });
+    }
+});
+
+app.post("/divar_send_sms", (req, res) => {
     const options = {
         url: 'https://api.divar.ir/v5/auth/authenticate',
         method: 'POST',
@@ -51,7 +97,51 @@ app.post("/divar_sms", (req, res) => {
     }
 });
 
-app.post("/verify_sms", (req, res) => {
+app.post("/sheypoor_verify_sms", (req, res) => {
+    const url = 'https://www.sheypoor.com/api/v10.0.0/auth/verify';
+    if (req.body.code && req.body.code.length == 4 && /^\d+$/.test(req.body.code) && req.body.token) {
+        const options = {
+            method: 'POST',
+            headers: {
+                'Host': 'www.sheypoor.com',
+                'Content-Length': '363',
+                'Sec-Ch-Ua': '"Not A(Brand";v="24", "Chromium";v="110"',
+                'Accept': 'application/json',
+                'Content-Type': 'application/json;charset=UTF-8',
+                'Sec-Ch-Ua-Mobile': '?0',
+                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.5481.78 Safari/537.36',
+                'Sec-Ch-Ua-Platform': '"Linux"',
+                'Origin': 'https://www.sheypoor.com',
+                'Sec-Fetch-Site': 'same-origin',
+                'Sec-Fetch-Mode': 'cors',
+                'Sec-Fetch-Dest': 'empty',
+                'Referer': 'https://www.sheypoor.com/session',
+                'Accept-Encoding': 'gzip, deflate',
+                'Accept-Language': 'en-US,en;q=0.9',
+                'Cookie': 'ts=b7327854cbe4c285eac3756841da8c14; analytics_token=0e8debfa-e128-720b-9bbb-5a58e3815b4c; analytics_session_token=14bf676e-9796-2da2-5e72-59b4ca04b7d8; yektanet_session_last_activity=7/24/2023; _yngt_iframe=1; _yngt=4bcb2bb4-46c76-649ae-e0363-3bd60900a3498; verify_token=Bearer+eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiIsInR5cGUiOiJWRVJJRlkifQ.eyJqdGkiOiI2NGJlNWQ3NzZmZDJjOC40NTE5NjA4MiIsImlzcyI6InNoZXlwb29yIiwiYXVkIjoic2hleXBvb3IiLCJpYXQiOjE2OTAxOTczNjcsImV4cCI6MTY5MDE5Nzk2NywibmJmIjoxNjkwMTk3MzY3LCJtb2JpbGUiOiIwOTEzODc4MDI3NSIsInVzZXJJZCI6IjE3Nzg4MjMifQ.2cP59ckLvjjjbTFjG9gA3i6kbTko4b1LNotpAK_0yqI; track_id=da32e42e1d377251e71b323e8552f61f; _ga_ZQPNE545GF=GS1.1.1690197303.1.1.1690197334.29.0.0; _ga=GA1.2.1737732084.1690197303; _gid=GA1.2.489224929.1690197370',
+            },
+            body: JSON.stringify({ "verify_token": req.body.token, "verification_code": req.body.code }),
+        };
+        fetch(url, options)
+            .then(response => {
+                if (!response.ok || response.ok != 200) {
+                    res.json({ "status": "false", "message": "failed_to_verify_sms" });
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log(data)
+                res.json({ "status": "true", "message": "done" });
+            })
+            .catch(_err => {
+                res.json({ "status": "false", "message": "failed_to_verify_sms" });
+            });
+    } else {
+        res.json({ "status": "false", "message": "failed_to_verify_sms" });
+    }
+});
+
+app.post("/divar_verify_sms", (req, res) => {
     const url = 'https://api.divar.ir/v5/auth/confirm';
     const options = {
         method: 'POST',
@@ -92,7 +182,7 @@ app.post("/verify_sms", (req, res) => {
     }
 });
 
-app.get("/cities", (_req, res) => {
+app.get("/divar_cities", (_req, res) => {
     fetch("https://api.divar.ir/v5/places/cities").then((response) => {
         if (!response.ok) {
             res.json({ "status": "false", "message": "invalid_request" });
@@ -101,7 +191,7 @@ app.get("/cities", (_req, res) => {
     }).then((data) => {
         const cities = {};
         data.cities.map((c) => {
-            cities[c["name"]] = {"id": c["id"] , "radius": c["radius"]};
+            cities[c["name"]] = { "id": c["id"], "radius": c["radius"] };
         })
         res.json({ "status": "true", "data": cities });
     }).catch((_err) => {
@@ -147,7 +237,7 @@ app.post("/divar_post", (req, res) => {
     fetch(url, options)
         .then(response => {
             if (!response.ok) {
-                res.json({ "status": "false", "message": "invalid_national_id", "login": request.status});
+                res.json({ "status": "false", "message": "invalid_national_id", "login": request.status });
             }
             return response.json();
         })
@@ -164,7 +254,7 @@ app.post("/divar_post", (req, res) => {
                     "radius": town["radius"],
                     "districtError": false
                 };
-                
+
                 const requested = {
                     "category": req.body.category,
                     "images": [],
@@ -244,7 +334,6 @@ app.post("/divar_post", (req, res) => {
                         return response.json();
                     })
                     .then(data => {
-                        console.log(data, data.code)
                         if (data.code == 200) {
                             res.json({ "status": "true", "message": "posted" });
                         } else {
@@ -252,7 +341,6 @@ app.post("/divar_post", (req, res) => {
                         }
                     })
                     .catch(error => {
-                        console.log(error)
                         res.json({ "status": "false", "message": "invalid_request" });
                     });
             }

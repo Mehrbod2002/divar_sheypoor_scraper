@@ -281,7 +281,8 @@ app.post("/divar_send_sms", (req, res) => {
         },
         body: '{"phone":"9138780275"}',
     };
-    if (req.body.phone && req.body.phone.length == 10 && req.body.phone.substring(0, 2) == "91") {
+    console.log(req.body.phone,req.body.phone.length,req.body.phone.substring(0, 1) == 9)
+    if (req.body.phone && req.body.phone.length == 10 && req.body.phone.substring(0, 1) == "9") {
         options.body = `{"phone":"${req.body.phone}"}`;
         options.headers['Content-Length'] = options.body.length;
         request(options, (error, _response, body) => {

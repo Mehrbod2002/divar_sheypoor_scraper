@@ -1,4 +1,4 @@
-var sheypoor_cities = {
+export default {
     "تهران": ["8", [
         {
             "ارجمند": "290",

@@ -1,14 +1,14 @@
 import request from 'request';
 import express from 'express';
 import fetch from 'node-fetch';
-import cities from './cities.js';
 import { config } from 'dotenv';
+import sheypoor_cities from './sheypoor_cities.js';
 const app = express();
 config();
 app.use(express.json());
 
-app.post("/sheypoor_send_sms", (req, res) => {
-    if (req.body.phone && req.body.phone.length == 10 && req.body.phone.substring(0, 2) == "91") {
+app.post("/sheypoor/send_sms", (req, res) => {
+    if (req.body.phone && req.body.phone.length == 10) {
         fetch("https://www.sheypoor.com/api/protools/v2.1/auth/register", {
             "credentials": "include",
             "headers": {
@@ -45,8 +45,8 @@ app.post("/sheypoor_send_sms", (req, res) => {
     }
 });
 
-app.post("/sheypoor_verify_sms", (req, res) => {
-    if (req.body.phone && req.body.phone.length == 10 && req.body.phone.substring(0, 2) == "91" && req.body.code && req.body.code.length == 4 && /^\d+$/.test(req.body.code) && req.body.token) {
+app.post("/sheypoor/verify_sms", (req, res) => {
+    if (req.body.phone && req.body.phone.length == 10 && req.body.code && req.body.code.length == 4 && /^\d+$/.test(req.body.code) && req.body.token) {
         fetch("https://www.sheypoor.com/api/protools/v2.1/auth/authorize", {
             "credentials": "include",
             "headers": {
@@ -83,7 +83,7 @@ app.post("/sheypoor_verify_sms", (req, res) => {
     }
 });
 
-app.post("/sheypoor_post", (req, res) => {
+app.post("/sheypoor/post", (req, res) => {
     const url = 'https://www.sheypoor.com/api/protools/v2.1/listings';
     const headers = {
         'Host': 'www.sheypoor.com',
@@ -183,47 +183,29 @@ app.post("/sheypoor_post", (req, res) => {
     } else {
         ava_room = rooms[req.body.rooms];
     }
-    var city_cat = {
-        "تهران": "8",
-        "مازندران": "27",
-        "آذربایجان شرقی": "1",
-        "آذربایجان غربی": "2",
-        "اردبیل": "3",
-        "اصفهان": "4",
-        "البرز": "5",
-        "ایلام": "6",
-        "بوشهر": "7",
-        "چهارمحال و بختیاری": "9",
-        "خراسان جنوبی": "10",
-        "خراسان رضوی": "11",
-        "خراسان شمالی": "12",
-        "خوزستان": "13",
-        "زنجان": "14",
-        "سمنان": "15",
-        "سیستان و بلوچستان": "16",
-        "فارس": "17",
-        "قزوین": "18",
-        "قم": "19",
-        "کردستان": "20",
-        "کرمان": "21",
-        "کرمانشاه": "22",
-        "کهگیلویه و بویراحمد": "23",
-        "گلستان": "24",
-        "لرستان": "25",
-        "گیلان": "26",
-        "مرکزی": "28",
-        "هرمزگان": "29",
-        "همدان": "30",
-        "یزد": "31"
-    }
-    var selected_city = null;
-    if (req.body.city && city_cat.indexOf(req.body.city) != -1) {
-        selected_city = req.body.city;
+    var province = null;
+    var city = null;
+    var region = null;
+    if (req.body.province && sheypoor_cities[req.body.province]) {
+        if (Array.isArray(sheypoor_cities[req.body.province])) {
+            if (req.body?.city) {
+                city = sheypoor_cities[req.body.province][1][req.body.city];
+                if (req.body?.region) {
+                    region = sheypoor_cities[req.body.province][1][req.body.city][req.body.region];
+                } else {
+                    region = city;
+                }
+            } else {
+                region = province;
+            }
+        } else {
+            province = sheypoor_cities[req.body.province];
+        }
     } else {
         res.json({ "status": "false", "message": "invalid_city" });
     }
     const data = {
-        location: selected_city,
+        location: region,
         a96010: built_year,
         a96002: req.body.parking,
         a96003: req.body.warehouse,
@@ -257,7 +239,7 @@ app.post("/sheypoor_post", (req, res) => {
         .catch((error) => console.error('Error:', error));
 });
 
-app.post("/divar_send_sms", (req, res) => {
+app.post("/divar/send_sms", (req, res) => {
     const options = {
         url: 'https://api.divar.ir/v5/auth/authenticate',
         method: 'POST',
@@ -281,8 +263,7 @@ app.post("/divar_send_sms", (req, res) => {
         },
         body: '{"phone":"9138780275"}',
     };
-    console.log(req.body.phone,req.body.phone.length,req.body.phone.substring(0, 1) == 9)
-    if (req.body.phone && req.body.phone.length == 10 && req.body.phone.substring(0, 1) == "9") {
+    if (req.body.phone && req.body.phone.length == 10) {
         options.body = `{"phone":"${req.body.phone}"}`;
         options.headers['Content-Length'] = options.body.length;
         request(options, (error, _response, body) => {
@@ -302,7 +283,7 @@ app.post("/divar_send_sms", (req, res) => {
     }
 });
 
-app.post("/divar_verify_sms", (req, res) => {
+app.post("/divar/verify_sms", (req, res) => {
     const url = 'https://api.divar.ir/v5/auth/confirm';
     const options = {
         method: 'POST',
@@ -322,7 +303,7 @@ app.post("/divar_verify_sms", (req, res) => {
         },
         body: '',
     };
-    if (req.body.phone && req.body.phone.length == 10 && req.body.phone.substring(0, 2) == "91" && req.body.code && req.body.code.length == 6 && /^\d+$/.test(req.body.code)) {
+    if (req.body.phone && req.body.phone.length == 10 && req.body.code && req.body.code.length == 6 && /^\d+$/.test(req.body.code)) {
         options.body = JSON.stringify({ "phone": req.body.phone, "code": req.body.code });
         fetch(url, options)
             .then(response => {
@@ -333,7 +314,17 @@ app.post("/divar_verify_sms", (req, res) => {
             })
             .then(data => {
                 const { token } = data;
-                res.json({ "status": "true", "message": "done", "token": token });
+                fetch("https://api.divar.ir/v8/user-profile/verify_user", options)
+                    .then(response => {
+                        if (!response.ok) {
+                            res.json({ "status": "false", "message": "invalid_national_id", "login": request.status });
+                            return;
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        res.json({ "status": "true", "message": "done", "token": token, "verify": data });
+                    })
             })
             .catch(_err => {
                 res.json({ "status": "false", "message": "failed_to_verify_sms" });
@@ -343,28 +334,49 @@ app.post("/divar_verify_sms", (req, res) => {
     }
 });
 
-app.get("/divar_cities", (_req, res) => {
+app.get("/divar/cities", (req, res) => {
     fetch("https://api.divar.ir/v5/places/cities").then((response) => {
         if (!response.ok) {
             res.json({ "status": "false", "message": "invalid_request" });
         }
         return response.json();
     }).then((data) => {
-        const cities = {};
-        data.cities.map((c) => {
-            cities[c["name"]] = { "id": c["id"], "radius": c["radius"] };
-        })
-        res.json({ "status": "true", "data": cities });
+        const distincts = {};
+        if (req.query.districts) {
+            data.cities.map((c) => {
+                if (c["name"] == req.query.districts) {
+                    fetch(`https://api.divar.ir/v5/places/cities/${c["id"]}/districts`).then(async (dis) => {
+                        if (!dis.ok || dis.status != 200) {
+                            res.json({ "status": "false", "message": "invalid_request" });
+                        }
+                        dis = await dis.json();
+                        Object.values(dis["districts"]).map((d) => {
+                            distincts[d["name"]] = { "id": d["id"], "radius": d["radius"] };
+                        });
+                        res.json({ "status": "true", "message": "done", "data": distincts });
+                    }).catch((_err) => {
+                        res.json({ "status": "false", "message": "invalid_request" });
+                    });
+                }
+            });
+        } else {
+            const cities = {};
+            data.cities.map((c) => {
+                cities[c["name"]] = { "id": c["id"], "radius": c["radius"] };
+            });
+            res.json({ "status": "true", "data": cities });
+        }
     }).catch((_err) => {
         res.json({ "status": "false", "message": "invalid_request" });
     });
 });
 
-app.post("/divar_post", (req, res) => {
-    const url = 'https://api.divar.ir/v8/user-profile/verify_user';
+app.post("/divar/post", (req, res) => {
+    const url = '';
     if (req.body.national_id && req.body.national_id.length == 10) { }
     else {
         res.json({ "status": "false", "message": "invalid_national_id" });
+        return;
     }
     const data = {
         iranian_identity_info: {
@@ -399,115 +411,150 @@ app.post("/divar_post", (req, res) => {
         .then(response => {
             if (!response.ok) {
                 res.json({ "status": "false", "message": "invalid_national_id", "login": request.status });
+                return;
             }
             return response.json();
         })
         .then(data => {
             if (data.code) {
                 res.json({ "status": "false", "message": "invalid_request" });
+                return;
             } else {
-                if (cities.indexOf(req.body.city) == -1) {
+                if (req.body.city == undefined) {
                     res.json({ "status": "false", "message": "invalid_city" });
+                    return;
                 }
-                var town = cities[req.body.city];
-                const location = {
-                    "city": town["id"],
-                    "radius": town["radius"],
-                    "districtError": false
-                };
-
-                const requested = {
-                    "category": req.body.category,
-                    "images": [],
-                    "size": req.body.size,
-                    "user_type": req.body.user_type,
-                    "rent_to_single": req.body.rent_to_single,
-                    "rooms": req.body.rooms,
-                    "year": req.body.year,
-                    "floor": req.body.floor,
-                    "elevator": req.body.elevator,
-                    "parking": req.body.parking,
-                    "warehouse": req.body.warehouse,
-                    "national_id": req.body.national_id,
-                    "title": req.body.title,
-                    "description": req.body.description,
-                };
-                const url = 'https://api.divar.ir/v8/ongoingposts/multi';
-                const data_post = JSON.stringify({
-                    "data": {
-                        "response_time": {},
-                        "video": {},
-                        "nationality": "iranian",
-                        "transformable_price": {},
-                        "contact": {
-                            "phone": data.payload.phone,
-                            "force_chat_enabled": {},
-                            "chat_enabled": true,
-                            "contact_description": {},
-                            "contact_title": {}
-                        },
-                        "foreigners_user_profile_not_supported": {},
-                        "foreigners_verification_description": {},
-                        "national_id_title": {},
-                        "user_profile_description": {},
-                        "user_profile_title": {},
-                        "response_time_description": {},
-                        "location": location,
-                        "other_options_and_attributes": {
-                            "other_options_section": {},
-                            "other_attributes_section": {}
-                        },
-                        requested,
-                    },
-                    "page": 1,
-                    "refetch": false,
-                    "verify_user_sign": data.sign,
-                    "verify_user_payload": data.payload,
-                });
-                const options = {
-                    method: 'POST',
-                    headers: {
-                        'Host': 'api.divar.ir',
-                        'Content-Length': data_post.length,
-                        'Sec-Ch-Ua': 'Not A(Brand";v="24", "Chromium";v="110"',
-                        'Accept': 'application/json, text/plain, */*',
-                        'Content-Type': 'application/json',
-                        'Sec-Ch-Ua-Mobile': '?0',
-                        'Authorization': `Basic ${req.body.token}`,
-                        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.5481.78 Safari/537.36',
-                        'Sec-Ch-Ua-Platform': 'Linux',
-                        'Origin': 'https://divar.ir',
-                        'Sec-Fetch-Site': 'same-site',
-                        'Sec-Fetch-Mode': 'cors',
-                        'Sec-Fetch-Dest': 'empty',
-                        'Referer': 'https://divar.ir/',
-                        'Accept-Encoding': 'gzip, deflate',
-                        'Accept-Language': 'en-US,en;q=0.9',
-                    },
-                    body: data_post,
-                };
-
-                fetch(url, options)
-                    .then(response => {
-                        if (!response.ok) {
-                            res.json({ "status": "false", "message": "invalid_request" });
-                        }
-                        return response.json();
-                    })
-                    .then(data => {
-                        if (data.code == 200) {
-                            res.json({ "status": "true", "message": "posted" });
-                        } else {
-                            res.json({ "status": "false", "message": "invalid_request" });
-                        }
-                    })
-                    .catch(error => {
+                var town_id = null;
+                var town_radius = null;
+                fetch("https://api.divar.ir/v5/places/cities").then((response) => {
+                    if (!response.ok) {
                         res.json({ "status": "false", "message": "invalid_request" });
+                        return
+                    }
+                    return response.json();
+                }).then((data) => {
+                    data.cities.map((c) => {
+                        if (c["name"] == req.body.city) {
+                            fetch(`https://api.divar.ir/v5/places/cities/${c["id"]}/districts`).then(async (dis) => {
+                                if (!dis.ok || dis.status != 200) {
+                                    res.json({ "status": "false", "message": "invalid_request" }).end();
+                                    return
+                                }
+                                dis = await dis.json();
+                                Object.values(dis["districts"]).map((d) => {
+                                    if (d["name"] == req.body.districts) {
+                                        town_id = d["id"];
+                                        town_radius = d["radius"];
+                                    }
+                                    const location = {
+                                        "city": town_id,
+                                        "radius": town_radius,
+                                        "districtError": false
+                                    };
+                    
+                                    const requested = {
+                                        "category": req.body.category,
+                                        "images": [],
+                                        "size": req.body.size,
+                                        "new_price": req.body.price,
+                                        "user_type": req.body.user_type,
+                                        "rent_to_single": req.body.rent_to_single,
+                                        "rooms": req.body.rooms,
+                                        "year": req.body.year,
+                                        "floor": req.body.floor,
+                                        "elevator": req.body.elevator,
+                                        "parking": req.body.parking,
+                                        "warehouse": req.body.warehouse,
+                                        "national_id": req.body.national_id,
+                                        "title": req.body.title,
+                                        "description": req.body.description,
+                                    };
+                                    const url = 'https://api.divar.ir/v8/ongoingposts/multi';
+                                    const data_post = JSON.stringify({
+                                        "data": {
+                                            "response_time": {},
+                                            "video": {},
+                                            "nationality": "iranian",
+                                            "transformable_price": {},
+                                            "contact": {
+                                                "phone": req.body.phone,
+                                                "force_chat_enabled": {},
+                                                "chat_enabled": true,
+                                                "contact_description": {},
+                                                "contact_title": {}
+                                            },
+                                            "foreigners_user_profile_not_supported": {},
+                                            "foreigners_verification_description": {},
+                                            "national_id_title": {},
+                                            "user_profile_description": {},
+                                            "user_profile_title": {},
+                                            "response_time_description": {},
+                                            "location": location,
+                                            "other_options_and_attributes": {
+                                                "other_options_section": {},
+                                                "other_attributes_section": {}
+                                            },
+                                            requested,
+                                        },
+                                        "page": 1,
+                                        "refetch": false,
+                                        "verify_user_sign": req.body.sign,
+                                        "verify_user_payload": req.body.payload,
+                                    });
+                                    const options = {
+                                        method: 'POST',
+                                        headers: {
+                                            'Host': 'api.divar.ir',
+                                            'Content-Length': data_post.length,
+                                            'Sec-Ch-Ua': 'Not A(Brand";v="24", "Chromium";v="110"',
+                                            'Accept': 'application/json, text/plain, */*',
+                                            'Content-Type': 'application/json',
+                                            'Sec-Ch-Ua-Mobile': '?0',
+                                            'Authorization': `Basic ${req.body.token}`,
+                                            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.5481.78 Safari/537.36',
+                                            'Sec-Ch-Ua-Platform': 'Linux',
+                                            'Origin': 'https://divar.ir',
+                                            'Sec-Fetch-Site': 'same-site',
+                                            'Sec-Fetch-Mode': 'cors',
+                                            'Sec-Fetch-Dest': 'empty',
+                                            'Referer': 'https://divar.ir/',
+                                            'Accept-Encoding': 'gzip, deflate',
+                                            'Accept-Language': 'en-US,en;q=0.9',
+                                        },
+                                        body: data_post,
+                                    };
+                    
+                                    fetch(url, options)
+                                        .then(response => {
+                                            if (!response.ok) {
+                                                return res.json({ "status": "false", "message": "invalid_request" }).end();
+                                            }
+                                            return response.json();
+                                        })
+                                        .then(data => {
+                                            if (data.code == 200) {
+                                                return res.json({ "status": "true", "message": "posted" }).end();
+                                            } else {
+                                                return res.json({ "status": "false", "message": "invalid_request" }).end();
+                                            }
+                                        })
+                                        .catch(_ => {
+                                            return res.json({ "status": "false", "message": "invalid_request" }).end();
+                                        });
+                                });
+                                res.json({ "status": "false", "message": "invalid_city" }).end();
+                                return
+                            }).catch((_err) => {
+                                res.json({ "status": "false", "message": "invalid_request" }).end();
+                                return
+                            });
+                        }
                     });
+                });
             }
         })
         .catch(_err => {
-            res.json({ "status": "false", "message": "invalid_request" });
+            return res.json({ "status": "false", "message": "invalid_request" }).end();
         });
 });
 

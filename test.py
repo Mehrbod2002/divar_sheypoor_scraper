@@ -1,37 +1,44 @@
 import requests 
 
 # #################################### Divar 
-# ##### Verify user
-# res = requests.post("http://127.0.0.1:3000/divar_send_sms", json = { "phone" : "9138780275"}).json()
+##### Verify user
+# res = requests.post("http://127.0.0.1:3000/divar/send_sms", json = { "phone" : "9393313798"}).json()
 # if res["status"] == 'true':
 #     code = input("code: ")
-#     res = requests.post("http://127.0.0.1:3000/divar_verify_sms", json = { "phone" : "9138780275","code": code})
+#     res = requests.post("http://127.0.0.1:3000/divar/verify_sms", json = { "phone" : "9393313798","code": code})
 #     print(res.text)
-#     # { status : "true" or "false" , "token": "....."}
+    # { status : "true" or "false" , "token": "....."}
 
-
-# ######### Post
-# requested = {
-#     "token": "",
-#     "city": "اصفهان",
-#     "category": "apartment-rent", # apartment-sell
-#     "images": [],
-#     "size": 2555,
-#     "user_type": "شخصی", # مشاور املاک
-#     "rent_to_single": "true",
-#     "rooms": "چهار",
-#     "year": "۱۳۹۴",
-#     "floor": "0",
-#     "elevator": "false",
-#     "parking": "true",
-#     "warehouse": "true",
-#     "national_id": "1273746643",
-#     "title": "ملک برای فروش",
-#     "description": "مناسب و مجهز",
-# }
-# res = requests.post("http://127.0.0.1:3000/divar_post", json = requested)
-# # { "status": "true", "message": "posted" }
+#### Distincs
+# res = requests.get("http://127.0.0.1:3000/divar/cities?districts=اصفهان")
 # print(res.text)
+
+######### Post
+requested = {
+    "token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyIjoiMDkzOTMzMTM3OTgiLCJpc3MiOiJhdXRoIiwidmVyaWZpZWRfdGltZSI6MTY5MDI5Njk4MywiaWF0IjoxNjkwMjk2OTgzLCJleHAiOjE2OTE1OTI5ODMsInVzZXItdHlwZSI6InBlcnNvbmFsIiwidXNlci10eXBlLWZhIjoiXHUwNjdlXHUwNjQ2XHUwNjQ0IFx1MDYzNFx1MDYyZVx1MDYzNVx1MDZjYyIsInNpZCI6ImY1MjM5MTJkLWIyZGMtNGZiNi1hN2E0LWM2MWQ0ZmI3ZTUzNiJ9.BQPInRF70aqajHehlRYwEycbeLvJpWDcXIh4oTG64S0",
+    "city": "اصفهان",
+    "districts": "تالار",
+    "category": "apartment-rent", # apartment-sell
+    "images": [],
+    "size": 2555,
+    "payload": "",
+    "sign": "",
+    "phone": "",
+    "user_type": "شخصی", # مشاور املاک
+    "rent_to_single": "true",
+    "rooms": "چهار",
+    "year": "۱۳۹۴",
+    "floor": "0",
+    "elevator": "false",
+    "parking": "true",
+    "warehouse": "true",
+    "national_id": "1273746643",
+    "title": "ملک برای فروش",
+    "description": "مناسب و مجهز",
+}
+res = requests.post("http://127.0.0.1:3000/divar/post", json = requested)
+# # { "status": "true", "message": "posted" }
+print(res.text)
 
 
 # ################ Cities

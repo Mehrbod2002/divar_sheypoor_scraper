@@ -2,7 +2,13 @@ import request from 'request';
 import express from 'express';
 import fetch from 'node-fetch';
 import { config } from 'dotenv';
-import { sheypoor_cities, rooms_daily } from './sheypoor_cities.js';
+import {
+    nama, kitchen, parking_count, floor_loc, situation,
+    floorth, others, others_1, building_type, cabinet,
+    file_situation, earth_loc, entertainment, sheypoor_cities,
+    security, sports, systems, kafpush, rooms_daily
+} from './sheypoor_cities.js';
+
 const app = express();
 config();
 app.use(express.json());
@@ -73,7 +79,7 @@ app.post("/sheypoor/verify_sms", (req, res) => {
                 res.json({ "status": "false", "message": "invalid_phone_and_code" });
             } else {
                 response = await response.json();
-                res.json({ "status": "true", "message": "done", "token": response.access_token, "expire": response.expires_in + new Date().getTime() });
+                res.json({ "status": "true", "message": "done", "token": req.body.token, "acccess_token": response.access_token, "expire": response.expires_in + new Date().getTime() });
             }
         }).catch((_err) => {
             res.json({ "status": "false", "message": "invalid_phone_and_code" });
@@ -213,6 +219,153 @@ app.post("/sheypoor/post", (req, res) => {
     } else {
         data["price"] = req.body.price;
     }
+    if (req.body.building_type) {
+        req.body.building_type.map((building_type1) => {
+            if (data[building_type[0]]) {
+                data[building_type[0]].push(building_type[1][building_type1]);
+            } else {
+                data[building_type[0]] = [building_type[1][building_type1]];
+            }
+        });
+    }
+    if (req.body.cabinet) {
+        req.body.cabinet.map((cabinet1) => {
+            if (data[cabinet[0]]) {
+                data[cabinet[0]].push(cabinet[1][cabinet1]);
+            } else {
+                data[cabinet[0]] = [cabinet[1][cabinet1]];
+            }
+        });
+    }
+    if (req.body.others_1) {
+        req.body.others_1.map((others_11) => {
+            if (data[others_1[0]]) {
+                data[others_1[0]].push(others_1[1][others_11]);
+            } else {
+                data[others_1[0]] = [others_1[1][others_11]];
+            }
+        });
+    }
+    if (req.body.file_situation) {
+        req.body.file_situation.map((file_situation1) => {
+            if (data[file_situation[0]]) {
+                data[file_situation[0]].push(file_situation[1][file_situation1]);
+            } else {
+                data[file_situation[0]] = [file_situation[1][file_situation1]];
+            }
+        });
+    }
+    if (req.body.earth_loc) {
+        req.body.earth_loc.map((earth_loc1) => {
+            if (data[earth_loc[0]]) {
+                data[earth_loc[0]].push(earth_loc[1][earth_loc1]);
+            } else {
+                data[earth_loc[0]] = [earth_loc[1][earth_loc1]];
+            }
+        });
+    }
+    if (req.body.entertainment) {
+        req.body.entertainment.map((entertainment1) => {
+            if (data[entertainment[0]]) {
+                data[entertainment[0]].push(entertainment[1][entertainment1]);
+            } else {
+                data[entertainment[0]] = [entertainment[1][entertainment1]];
+            }
+        });
+    }
+    if (req.body.systems) {
+        req.body.systems.map((systems1) => {
+            if (data[systems[0]]) {
+                data[systems[0]].push(systems[1][systems1]);
+            } else {
+                data[systems[0]] = [systems[1][systems1]];
+            }
+        });
+    }
+    if (req.body.situation) {
+        req.body.situation.map((situation1) => {
+            if (data[situation[0]]) {
+                data[situation[0]].push(situation[1][situation1]);
+            } else {
+                data[situation[0]] = [situation[1][situation1]];
+            }
+        });
+    }
+    if (req.body.sports) {
+        req.body.sports.map((sports1) => {
+            if (data[sports[0]]) {
+                data[sports[0]].push(sports[1][sports1]);
+            } else {
+                data[sports[0]] = [sports[1][sports1]];
+            }
+        });
+    }
+    if (req.body.kafpush) {
+        req.body.kafpush.map((kafpush1) => {
+            if (data[kafpush[0]]) {
+                data[kafpush[0]].push(kafpush[1][kafpush1]);
+            } else {
+                data[kafpush[0]] = [kafpush[1][kafpush1]];
+            }
+        });
+    }
+    if (req.body.security) {
+        req.body.security.map((security1) => {
+            if (data[security[0]]) {
+                data[security[0]].push(security[1][security1]);
+            } else {
+                data[security[0]] = [security[1][security1]];
+            }
+        });
+    }
+    if (req.body.floorth) {
+        req.body.floorth.map((floorth1) => {
+            if (data[floorth[0]]) {
+                data[floorth[0]].push(floorth[1][floorth1]);
+            } else {
+                data[floorth[0]] = [floorth[1][floorth1]];
+            }
+        });
+    }
+    if (req.body.others) {
+        req.body.others.map((others1) => {
+            if (data[others[0]]) {
+                data[others[0]].push(others[1][others1]);
+            } else {
+                data[others[0]] = [others[1][others1]];
+            }
+        });
+    }
+    if (req.body.parking_count) {
+        data[parking_count[0]] = parking_count[1][req.body.parking_count];
+    }
+    if (req.body.floor_loc) {
+        req.body.floor_loc.map((floor_loc1) => {
+            if (data[floor_loc[0]]) {
+                data[floor_loc[0]].push(floor_loc[1][floor_loc1]);
+            } else {
+                data[floor_loc[0]] = [floor_loc[1][floor_loc1]];
+            }
+        });
+    }
+    if (req.body.kitchen) {
+        req.body.kitchen.map((kitchen1) => {
+            if (data[kitchen[0]]) {
+                data[kitchen[0]].push(kitchen[1][kitchen1]);
+            } else {
+                data[kitchen[0]] = [kitchen[1][kitchen1]];
+            }
+        });
+    }
+    if (req.body.nama) {
+        req.body.nama.map((nama1) => {
+            if (data[nama[0]]) {
+                data[nama[0]].push(nama[1][nama1]);
+            } else {
+                data[nama[0]] = [nama[1][nama1]];
+            }
+        });
+    }
     headers['Content-Length'] = data.length;
     fetch(url, {
         method: 'POST',
@@ -227,11 +380,63 @@ app.post("/sheypoor/post", (req, res) => {
                 res.json({ "status": "false", "message": "invalid_request", "errors": data.errors });
             } else {
                 if (data.message && data.message == "آگهی با موفقیت ثبت شد.") {
-                    res.json({ "status": "true", "message": "posted" });
+                    res.json({ "status": "true", "message": "posted", "post_id": data.human_readable_id });
+                } else {
+                    res.json({ "status": "true", "message": "failed_to_post" });
                 }
-            }
+            };
         })
-        .catch((error) =>  res.json({ "status": "false", "message": "invalid_request"}));
+        .catch((_err) => { res.json({ "status": "false", "message": "invalid_request" }) });
+});
+
+app.post("/sheypoor/publish", (req, res) => {
+    const post_id = req.body.post_id;
+    const post_url = `https://www.sheypoor.com/api/protools/v2.1/listings/${post_id}/publish`
+    const publish_data = {
+        "name": req.body.category + " در " + req.body.region,
+        "description": req.body.description,
+        "telephone": req.body.phone,
+        "disable_chat": true,
+        "vendors": ["sheypoor", "alounak"]
+    }
+    const headers = {
+        'Host': 'www.sheypoor.com',
+        'Content-Length': JSON.stringify(publish_data).length,
+        'Sec-Ch-Ua': 'Not A(Brand";v="24", "Chromium";v="110"',
+        'Protools-Client-Source': 'web',
+        'Accept-Language': 'fa',
+        'Source': 'protools',
+        'Sec-Ch-Ua-Mobile': '?0',
+        'Protools-Version': '2.1',
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.5481.78 Safari/537.36',
+        'Content-Type': 'application/json',
+        'Accept': 'application/json, text/plain, */*',
+        'X-Ticket': `${req.body.access_token}`,
+        'Protools-Env': 'production',
+        'Protools-Client-Os': 'web',
+        'Sec-Ch-Ua-Platform': 'Linux',
+        'Origin': 'https://www.sheypoor.com',
+        'Sec-Fetch-Site': 'same-origin',
+        'Sec-Fetch-Mode': 'cors',
+        'Sec-Fetch-Dest': 'empty',
+        'Referer': 'https://www.sheypoor.com/pro/real-estate/files/act',
+        'Accept-Encoding': 'gzip, deflate',
+    };
+    fetch(post_url, {
+        method: 'POST',
+        headers: headers,
+        body: JSON.stringify(publish_data),
+    }).then(async (data_publish) => {
+        const response = await data_publish.json();
+        if (data_publish.status == 200) {
+            res.json({ "status": "true", "message": "posted", "data": response });
+        } else {
+            const error = response.data?.errors == undefined ? response.error : response.data?.errors;
+            res.json({ "status": "true", "message": "failed_to_post", "errors": error });
+        }
+    }).catch((_err) => {
+        res.json({ "status": "false", "message": "failed_to_post" });
+    })
 });
 
 app.post("/divar/send_sms", (req, res) => {
@@ -578,6 +783,61 @@ app.post("/divar/upgrade", (req, res) => {
                 return res.json({ "status": "true", "message": "done" }).end();
             } else {
                 return res.json({ "status": "false", "message": "invalid_request", "error": data.message }).end();
+
+            }
+        }).catch((_err) => {
+            return res.json({ "status": "false", "message": "invalid_request" }).end();
+        });
+});
+
+app.post("/sheypoor/upgrade", (req, res) => {
+    if (req.body.token && req.body.post_id && req.body.acccess_token && req.body.method) { }
+    else {
+        res.json({ "status": "false", "message": "invalid_post_id" });
+        return;
+    }
+    if (req.body.method == "instant_tag" || req.body.method == "vitrine_48" 
+    || req.body.method == "vitrine_24" || req.body.method == "refresh" ) {
+        res.json({ "status": "false", "message": "invalid_method" });
+        return;
+    }
+    const url = `https://www.sheypoor.com/api/protools/v2.1/bank/consume/${req.body.post_id}/${req.body.method}?source=protools`;
+    const headers = {
+        'Host': 'www.sheypoor.com',
+        'Content-Length': '2',
+        'Sec-Ch-Ua': 'Not A(Brand";v="24", "Chromium";v="110"',
+        'Protools-Client-Source': 'web',
+        'Accept-Language': 'fa',
+        'Source': 'protools',
+        'Sec-Ch-Ua-Mobile': '?0',
+        'Protools-Version': '2.1',
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.5481.78 Safari/537.36',
+        'Content-Type': 'application/json',
+        'Accept': 'application/json, text/plain, */*',
+        'X-Ticket': `${req.body.acccess_token}`,
+        'Protools-Env': 'production',
+        'Protools-Client-Os': 'web',
+        'Sec-Ch-Ua-Platform': 'Linux',
+        'Origin': 'https://www.sheypoor.com',
+        'Sec-Fetch-Site': 'same-origin',
+        'Sec-Fetch-Mode': 'cors',
+        'Sec-Fetch-Dest': 'empty',
+        'Referer': 'https://www.sheypoor.com/pro/real-estate/listings/act',
+        'Accept-Encoding': 'gzip, deflate',
+        'Cookie': `access_token=Bearer+${req.body.token}; refresh_token=Bearer+${req.body.token}; isFromProtools=1; _ga=GA1.1.1737732084.1690197303; _ga_ZQPNE545GF=GS1.1.1690554365.3.0.1690554366.59.0.0; _gat=1; _ga_DVSH9VL0P2=GS1.2.1690546847.5.1.1690554406.0.0.0`
+    };
+    fetch(url, {
+        method: 'POST',
+        headers: headers,
+        body: '{}'
+    }).then(response => {
+        return response.json();
+    })
+        .then(data => {
+            if (data.code == 200) {
+                return res.json({ "status": "true", "message": "done" }).end();
+            } else {
+                return res.json({ "status": "false", "message": "invalid_request" }).end();
 
             }
         }).catch((_err) => {

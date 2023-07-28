@@ -95,6 +95,8 @@ import requests
 #     # "systems": [], # پیکیج ....
 #     # "capacity": 5, # ظرفیت
 #     # "kafpush": [], # پارکت...
+#     # "rent": 0, # اجاره
+#     # "credit": 0, # رهن
 #     # "rooms_daily": 100000, # قیمت روزانه
 #     "token" : "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiIsInR5cGUiOiJWRVJJRlkifQ.eyJqdGkiOiI2NGMyZmFiNzcxYTgwMS42MTU1MDE2MCIsImlzcyI6InNoZXlwb29yIiwiYXVkIjoic2hleXBvb3IiLCJpYXQiOjE2OTA0OTk3NjcsImV4cCI6MTY5MDUwMDM2NywibmJmIjoxNjkwNDk5NzY3LCJtb2JpbGUiOiIwOTEzODc4MDI3NSIsInVzZXJJZCI6IjE3Nzg4MjMifQ.SutwdNE7bLJEMbR7MAsz6s2rpLrTWIQNF9_pjhD03Ko"}).json()
 # print(res)

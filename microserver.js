@@ -1,8 +1,8 @@
 import request from 'request';
-import express, { json } from 'express';
+import express from 'express';
 import fetch from 'node-fetch';
 import { config } from 'dotenv';
-import sheypoor_cities from './sheypoor_cities.js';
+import { sheypoor_cities, rooms_daily } from './sheypoor_cities.js';
 const app = express();
 config();
 app.use(express.json());
@@ -150,17 +150,7 @@ app.post("/sheypoor/post", (req, res) => {
         "1402": "459400",
         "قبل از 1370": "455250"
     }
-    var built_year = 0;
     if (req.body.year && req.body.year > 1402) {
-        res.json({ "status": "false", "message": "invalid_year" });
-        return;
-    }
-    if (req.body.year < 1370) {
-        built_year = years["قبل از 1370"];
-    } else {
-        built_year = years[req.body.year];
-    }
-    if (built_year == 0) {
         res.json({ "status": "false", "message": "invalid_year" });
         return;
     }
@@ -172,16 +162,8 @@ app.post("/sheypoor/post", (req, res) => {
         "بدون اتاق": "439837",
         "5 به بالا": "439418"
     };
-    var ava_room = 0;
     if (req.body.rooms < 0) {
         res.json({ "status": "false", "message": "invalid_room" });
-    }
-    if (req.body.rooms == 0) {
-        ava_room = rooms["بدون اتاق"];
-    } else if (req.body.rooms >= 5) {
-        ava_room = rooms["5 به بالا"];
-    } else {
-        ava_room = rooms[req.body.rooms];
     }
     var province = null;
     var city = null;
@@ -206,18 +188,31 @@ app.post("/sheypoor/post", (req, res) => {
     }
     const data = {
         location: region,
-        a96010: built_year,
+        a96010: years[req.body.year],
         a96002: req.body.parking,
         a96003: req.body.warehouse,
         a96004: req.body.elevator,
         a68085: req.body.size,
-        a68133: ava_room,
-        price: req.body.price,
+        a68133: rooms[req.body.rooms],
         description: req.body.description,
         images: [],
         videos: [],
         category: category[req.body.category],
+        a90105: req.body.code_file,
+        a97008: req.body.size_info,
+        a97004: req.body.floors,
+        a97005: req.body.units_floors
     };
+    if (data.category == 43606 || data.category == 43607) {
+        data["a68090"] = req.body.credit;
+        data["a68092"] = req.body.rent;
+    } else if (data.category == 44585) {
+        data["a70020"] = req.body.rent;
+        data["a70019"] = req.body.capacity;
+        data["a68133"] = rooms_daily[req.body.rooms];
+    } else {
+        data["price"] = req.body.price;
+    }
     headers['Content-Length'] = data.length;
     fetch(url, {
         method: 'POST',
@@ -236,7 +231,7 @@ app.post("/sheypoor/post", (req, res) => {
                 }
             }
         })
-        .catch((error) => console.error('Error:', error));
+        .catch((error) =>  res.json({ "status": "false", "message": "invalid_request"}));
 });
 
 app.post("/divar/send_sms", (req, res) => {
@@ -425,6 +420,7 @@ app.post("/divar/post", (req, res) => {
             }
             if (data.cities[c]["name"] == req.body.city) {
                 var city_id = data.cities[c]["id"];
+
                 fetch(`https://api.divar.ir/v5/places/cities/${city_id}/districts`).then(async (dis) => {
                     if (!dis.ok || dis.status != 200) {
                         res.json({ "status": "false", "message": "invalid_request" }).end();

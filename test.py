@@ -62,18 +62,18 @@ import requests
 #     res = requests.post("http://127.0.0.1:3000/sheypoor/verify_sms", json = { "phone" : "9138780275","code": code, "token": token})
 #     print(res.text)
     # { status : "true" or "false" , "token": "....."}
-res = requests.post("http://127.0.0.1:3000/sheypoor/post", json = { 
-    "year": "1402",
-    "rooms": "4",
-    "province": "اصفهان",
-    "city":"اصفهان",
-    "region":"سیچان",
-    "parking":"false",
-    "warehouse":"false",
-    "elevator":"false",
-    "size":"10000",
-    "price":"1000000",
-    "description":"Descritpion ",
-    "category":"خرید و فروش ویلا",
-    "token" : "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiIsInR5cGUiOiJWRVJJRlkifQ.eyJqdGkiOiI2NGMyZmFiNzcxYTgwMS42MTU1MDE2MCIsImlzcyI6InNoZXlwb29yIiwiYXVkIjoic2hleXBvb3IiLCJpYXQiOjE2OTA0OTk3NjcsImV4cCI6MTY5MDUwMDM2NywibmJmIjoxNjkwNDk5NzY3LCJtb2JpbGUiOiIwOTEzODc4MDI3NSIsInVzZXJJZCI6IjE3Nzg4MjMifQ.SutwdNE7bLJEMbR7MAsz6s2rpLrTWIQNF9_pjhD03Ko"}).json()
-print(res)
+# res = requests.post("http://127.0.0.1:3000/sheypoor/post", json = { 
+#     "year": "1402",
+#     "rooms": "4",
+#     "province": "اصفهان",
+#     "city":"اصفهان",
+#     "region":"سیچان",
+#     "parking":"false",
+#     "warehouse":"false",
+#     "elevator":"false",
+#     "size":"10000",
+#     "price":"1000000",
+#     "description":"Descritpion ",
+#     "category":"خرید و فروش ویلا",
+#     "token" : "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiIsInR5cGUiOiJWRVJJRlkifQ.eyJqdGkiOiI2NGMyZmFiNzcxYTgwMS42MTU1MDE2MCIsImlzcyI6InNoZXlwb29yIiwiYXVkIjoic2hleXBvb3IiLCJpYXQiOjE2OTA0OTk3NjcsImV4cCI6MTY5MDUwMDM2NywibmJmIjoxNjkwNDk5NzY3LCJtb2JpbGUiOiIwOTEzODc4MDI3NSIsInVzZXJJZCI6IjE3Nzg4MjMifQ.SutwdNE7bLJEMbR7MAsz6s2rpLrTWIQNF9_pjhD03Ko"}).json()
+# print(res)

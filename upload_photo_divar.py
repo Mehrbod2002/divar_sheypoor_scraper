@@ -15,7 +15,7 @@ async def main(photo_path, token):
     try:
         global request_url
         async with async_playwright() as p:
-            browser = await p.chromium.launch(headless=False)
+            browser = await p.chromium.launch(headless=True)
             page = await browser.new_page()
 
             url = photo_path

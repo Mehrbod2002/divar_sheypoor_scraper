@@ -123,7 +123,7 @@ import requests
 #     "token" : "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiIsInR5cGUiOiJWRVJJRlkifQ.eyJqdGkiOiI2NGMyZmFiNzcxYTgwMS42MTU1MDE2MCIsImlzcyI6InNoZXlwb29yIiwiYXVkIjoic2hleXBvb3IiLCJpYXQiOjE2OTA0OTk3NjcsImV4cCI6MTY5MDUwMDM2NywibmJmIjoxNjkwNDk5NzY3LCJtb2JpbGUiOiIwOTEzODc4MDI3NSIsInVzZXJJZCI6IjE3Nzg4MjMifQ.SutwdNE7bLJEMbR7MAsz6s2rpLrTWIQNF9_pjhD03Ko"}).json()
 # print(res)
 
-##### upload photo
+##### upload photo divar
 # data = {
 #     "photo_path": "https://divar.ir/new?slug=apartment-rent",
 #     "token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyIjoiMDkxMzg3ODAyNzUiLCJpc3MiOiJhdXRoIiwidmVyaWZpZWRfdGltZSI6MTY5MDczNzY2MSwiaWF0IjoxNjkwNzM3NjYxLCJleHAiOjE2OTIwMzM2NjEsInVzZXItdHlwZSI6InBlcnNvbmFsIiwidXNlci10eXBlLWZhIjoiXHUwNjdlXHUwNjQ2XHUwNjQ0IFx1MDYzNFx1MDYyZVx1MDYzNVx1MDZjYyIsInNpZCI6ImE2ODc3MTU1LWJiMjYtNGU4Zi1hNTRmLTJiYzBhNzE0MDQ1NSJ9.NoXRlB1mGs6WKGSAMHxK8mbj3IpNSedgFQ6A_hq00QQ"
@@ -131,3 +131,14 @@ import requests
 
 # response = requests.post("http://127.0.0.1:5000/process_photo", json=data)
 # print(response.json())
+
+##### upload photo sheypoor
+# data = {
+#     "token": "",
+#     "access_token": "",
+#     "photos": ["url1", "url2"]
+# }
+
+# response = requests.post("http://127.0.0.1:3000/sheypoor/photo", json=data)
+# print(response.json())
+##### { status : true , message : "done" , data = [path:id, path:id, path:id]}

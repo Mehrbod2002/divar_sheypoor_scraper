@@ -796,8 +796,8 @@ app.post("/sheypoor/upgrade", (req, res) => {
         res.json({ "status": "false", "message": "invalid_post_id" });
         return;
     }
-    if (req.body.method == "instant_tag" || req.body.method == "vitrine_48" 
-    || req.body.method == "vitrine_24" || req.body.method == "refresh" ) {
+    if (req.body.method == "instant_tag" || req.body.method == "vitrine_48"
+        || req.body.method == "vitrine_24" || req.body.method == "refresh") {
         res.json({ "status": "false", "message": "invalid_method" });
         return;
     }
@@ -843,6 +843,69 @@ app.post("/sheypoor/upgrade", (req, res) => {
         }).catch((_err) => {
             return res.json({ "status": "false", "message": "invalid_request" }).end();
         });
+});
+
+app.post("/sheypoor/photo", (req, res) => {
+    const apiUrl = 'https://www.sheypoor.com/api/protools/v2.1/image';
+    var responses = {};
+    const headers = {
+        'Host': 'www.sheypoor.com',
+        'Cookie': `analytics_token=0e8debfa-e128-720b-9bbb-5a58e3815b4c; _yngt=4bcb2bb4-46c76-649ae-e0363-3bd60900a3498; user-logged-in=1; track_id=53dc517c7281682192c127268e1090fa; saved_items=%5B%5D; ts=eb99fed94b7200b15cb336e2f3738dbf; refresh_token=Bearer+${req.body.token}; _ga_ZQPNE545GF=GS1.1.1690554365.3.1.1690554909.60.0.0; _ga=GA1.2.1737732084.1690197303; _gid=GA1.2.1384958978.1690788245; _gat=1; analytics_session_token=7f65fdd9-64b8-e5e6-3785-3f5035256063; yektanet_session_last_activity=7/31/2023; _yngt_iframe=1; _ga_DVSH9VL0P2=GS1.2.1690788245.6.1.1690788260.0.0.0`,
+        'Content-Length': '53878',
+        'Sec-Ch-Ua': '"Not A(Brand";v="24", "Chromium";v="110"',
+        'Protools-Client-Source': 'web',
+        'Accept-Language': 'fa',
+        'Source': 'protools',
+        'Sec-Ch-Ua-Mobile': '?0',
+        'Protools-Version': '2.1',
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.5481.78 Safari/537.36',
+        'Content-Type': 'multipart/form-data; boundary=----WebKitFormBoundaryt1SmnjGfT6PGSPgn',
+        'Accept': 'application/json, text/plain, */*',
+        'X-Ticket': `${req.body.access_token}`,
+        'Protools-Env': 'production',
+        'Protools-Client-Os': 'web',
+        'Sec-Ch-Ua-Platform': '"Linux"',
+        'Origin': 'https://www.sheypoor.com',
+        'Sec-Fetch-Site': 'same-origin',
+        'Sec-Fetch-Mode': 'cors',
+        'Sec-Fetch-Dest': 'empty',
+        'Referer': 'https://www.sheypoor.com/pro/real-estate/file/new',
+        'Accept-Encoding': 'gzip, deflate',
+    };
+
+    const boundary = '----WebKitFormBoundaryt1SmnjGfT6PGSPgn';
+    try {
+        Object.values(req.body.photos).map((photo) => {
+            fetch(photo).then((data) => {
+                new Blob([data], { type: 'image/jpg' }).text().then((blod_data) => {
+                    var body = [
+                        `--${boundary}`,
+                        'Content-Disposition: form-data; name="image"; filename="blob"',
+                        'Content-Type: image/jpeg',
+                        '',
+                        blod_data,
+                        `--${boundary}--`,
+                        '',
+                    ].join('\r\n');
+                    var requestOptions = {
+                        method: 'POST',
+                        headers: headers,
+                        body: body,
+                    };
+                    try {
+                        fetch(apiUrl, requestOptions).then((response) => {
+                            return response.json();
+                        }).then((data) => {
+                            responses[photo] = data.id;
+                        }).catch((_err) => {});
+                    } catch (error) {}
+                });
+            });
+        });
+        return res.json({ "status": "true", "message": "done", "data": responses}).end();
+    } catch (_err) {
+        return res.json({ "status": "false", "message": "invalid_request" }).end();
+    }
 });
 
 app.listen(process.env.PORT);
